@@ -2,6 +2,7 @@ import selenium
 from selenium import webdriver
 from selenium.webdriver.common.keys import Keys
 import time
+from pprint import pprint
 
 CHROME_DRIVER_PATH = "c:/Users/nigga/code/python/100-days-of-code/chromedriver"  # .exe
 driver = webdriver.Chrome(CHROME_DRIVER_PATH)
@@ -19,36 +20,53 @@ def get_money():
     return money_value
 
 
-def get_price(id):
-    tag = driver.find_element_by_css_selector(id)
+def get_price(tag_id):
+    tag = driver.find_element_by_css_selector(tag_id)
     text = tag.text.split(" - ")[1]
     value = get_money_value(text)
-    return value
+    return {value: tag}
+
+
+def get_upgrades() -> dict:
+    upgrades = {}
+    upgrades.update(get_price("#buyCursor b"))
+    upgrades.update(get_price("#buyGrandma b"))
+    upgrades.update(get_price("#buyFactory b"))
+    upgrades.update(get_price("#buyMine b"))
+    upgrades.update(get_price("#buyShipment b"))
+    upgrades.update(get_price("div[id='buyAlchemy lab'] b"))
+    upgrades.update(get_price("#buyPortal b"))
+    upgrades.update(get_price("div[id='buyTime machine'] b"))
+    return upgrades
 
 
 driver.get("https://orteil.dashnet.org/experiments/cookie/")
 cookie = driver.find_element_by_css_selector("#cookie")
 
-money = get_money()
-buy_cursor = get_price("#buyCursor b")
-buy_grandma = get_price("#buyGrandma b")
-buy_factory = get_price("#buyFactory b")
-buy_mine = get_price("#buyMine b")
-buy_shipment = get_price("#buyShipment b")
-buy_alchemylab = get_price("div[id='buyAlchemy lab'] b")
-buy_portal = get_price("#buyPortal b")
-buy_timemachine = get_price("div[id='buytime machine'] b")
-
-driver.quit()
-exit()
 try:
+    print("while True")
     while True:
         time_start = time.time()
+        print("while click")
         while time.time() < time_start + 5:
             cookie.click()
 
-        money = int(money_tag.text)
-        cursor = int(buy_cursor.text.split(" - ")[1])
-        time.sleep(2)
+        print("get prices")
+        money = get_money()
+        upgrades = get_upgrades()
+
+        to_buy = None
+        for price, tag in upgrades.items():
+            if money >= price:
+                to_buy = tag
+
+        if to_buy:
+            print(f"buy {to_buy.text}")
+            to_buy.click()
+
+        # print("exit()")
+        # driver.quit()
+        # exit()
+        # time.sleep(2)
 except selenium.common.exceptions.WebDriverException as wde:
     print(wde)
