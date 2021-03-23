@@ -2,7 +2,8 @@ from selenium import webdriver
 import pprint
 from json import dumps
 
-CHROME_DRIVER_PATH = "c:/Users/nigga/code/python/100-days-of-code/chromedriver"  # .exe
+# CHROME_DRIVER_PATH = "c:/Users/nigga/code/python/100-days-of-code/chromedriver"  # .exe
+CHROME_DRIVER_PATH = "../chromedriver"  # .exe
 driver = webdriver.Chrome(executable_path=CHROME_DRIVER_PATH)
 
 

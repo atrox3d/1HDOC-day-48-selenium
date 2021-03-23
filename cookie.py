@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 from pprint import pprint
 
-CHROME_DRIVER_PATH = "c:/Users/nigga/code/python/100-days-of-code/chromedriver"  # .exe
+CHROME_DRIVER_PATH = "../chromedriver"  # .exe
 driver = webdriver.Chrome(CHROME_DRIVER_PATH)
 
 
