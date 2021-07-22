@@ -20,6 +20,7 @@ def wikipedia():
     search.send_keys("python")
     search.send_keys(Keys.ENTER)
 
+wikipedia()
 
 driver.get("http://secure-retreat-92358.herokuapp.com/")
 driver.find_element_by_name("fName").send_keys("robb")

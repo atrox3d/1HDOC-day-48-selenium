@@ -4,7 +4,7 @@ from selenium.webdriver.common.keys import Keys
 import time
 from pprint import pprint
 
-CHROME_DRIVER_PATH = "../chromedriver"  # .exe
+CHROME_DRIVER_PATH = "../chromedriver.92"  # .exe
 driver = webdriver.Chrome(CHROME_DRIVER_PATH)
 
 
