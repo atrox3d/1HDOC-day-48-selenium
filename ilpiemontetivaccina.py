@@ -70,7 +70,7 @@ def check_siamo_spiacenti():
         print("[*] trovato")
         print("[+] porta in vista...")
         driver.execute_script("arguments[0].scrollIntoView();", siamo_spiacenti)
-       return True
+        return True
     return False
 
 
