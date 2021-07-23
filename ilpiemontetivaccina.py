@@ -7,7 +7,35 @@ from selenium.common.exceptions import *
 from seleniumhelper import get_chromedriver
 
 
+def banner(text, emptylines=0, char="#", width=80):
+    # top line
+    print(char * width)
+
+    # top empty lines
+    for el in range(int(emptylines / 2) if emptylines else 0):
+        print(f"{char}{'':^{width - 2}}{char}")
+
+    if isinstance(text, str):
+        text = text.split("\n")
+    else:
+        try:
+            iter(text)
+        except TypeError:
+            text = (text, )
+    # text lines
+    for textline in text:
+        print(f"{char}{textline:^{width - 2}}{char}")
+
+    # bottom empty lines
+    for el in range(int(emptylines / 2) if emptylines else 0):
+        print(f"{char}{'':^{width - 2}}{char}")
+
+    # bottom line
+    print(char * width)
+
+
 def click_modifica():
+    banner("area personale")
     try:
         print("[+] cerco tasto modifica...")
         xpath = '//i[contains(text(), "arrow_drop_down")]'
@@ -23,6 +51,7 @@ def click_modifica():
 
 
 def click_sposta_appuntamento():
+    banner("area personale")
     print("[+] cerco Sposta appuntamento...")
     xpath = '//div[contains(text(), "Sposta appuntamento")]'
     if sposta_appuntamento := driver.find_element_by_xpath(xpath):
@@ -34,6 +63,7 @@ def click_sposta_appuntamento():
 
 
 def check_siamo_spiacenti():
+    banner("siamo spiacenti")
     print("[+] Controllo nessaggio errore...")
     xpath = '//div[contains(text(), "Siamo spiacenti")]'
     if siamo_spiacenti := driver.find_element_by_xpath(xpath):
@@ -43,6 +73,7 @@ def check_siamo_spiacenti():
 
 
 def click_torna_indietro():
+    banner("torna indietro")
     print("[+] cerco Torna indietro...")
     xpath = '//i[contains(text(), "keyboard_arrow_left")]'
     if torna_indietro := driver.find_element_by_xpath(xpath):
@@ -110,8 +141,11 @@ while loop:
             else:
                 aspetta(minuti=random.randint(1, 10))
         else:
-            print("[*] ATTENZIONE!")
-            print("[*] messaggio di errore non trovato!")
+            message = (
+                "[*] ATTENZIONE!",
+                "[*] messaggio di errore non trovato!"
+            )
+            banner(message)
             input("[+] premere un tasto per uscire...")
             break
     except KeyboardInterrupt:
