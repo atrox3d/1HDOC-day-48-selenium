@@ -68,7 +68,9 @@ def check_siamo_spiacenti():
     xpath = '//div[contains(text(), "Siamo spiacenti")]'
     if siamo_spiacenti := driver.find_element_by_xpath(xpath):
         print("[*] trovato")
-        return True
+        print("[+] porta in vista...")
+        driver.execute_script("arguments[0].scrollIntoView();", siamo_spiacenti)
+       return True
     return False
 
 
@@ -78,6 +80,8 @@ def click_torna_indietro():
     xpath = '//i[contains(text(), "keyboard_arrow_left")]'
     if torna_indietro := driver.find_element_by_xpath(xpath):
         print("[*] trovato")
+        print("[+] porta in vista...")
+        driver.execute_script("arguments[0].scrollIntoView();", torna_indietro)
         print("[+] click...")
         torna_indietro.click()
         return True
@@ -94,7 +98,7 @@ def aspetta(minuti=None, secondi=None):
     for t in range(seconds, 0, -1):
         print(f"{t}, ", end="", flush=True)
         time.sleep(1)
-
+    print()
 
 class Break(Exception): pass
 
@@ -127,12 +131,12 @@ while loop:
         if not click_modifica():
             notfound()
         else:
-            aspetta(secondi=random.randint(1, 5))
+            aspetta(secondi=random.randint(1, 10))
 
         if not click_sposta_appuntamento():
             notfound()
         else:
-            aspetta(secondi=random.randint(1, 5))
+            aspetta(secondi=random.randint(1, 10))
 
         if check_siamo_spiacenti():
             aspetta(minuti=random.randint(1, 10))
@@ -153,7 +157,9 @@ while loop:
         # driver.close()
         # exit()
         print("ctrl-c")
-        break
+        input("premi un tasto per terminare...")
+        driver.close()
+        exit()
     except Break:
         break
     except Continue:
