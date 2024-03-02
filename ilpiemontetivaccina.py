@@ -1,23 +1,25 @@
-import sys
-import os
 import time
+import random
 
 from selenium.webdriver.chrome.options import Options
+from selenium.common.exceptions import *
 
 from seleniumhelper import get_chromedriver
 
 
 def click_modifica():
-    print("[+] cerco tasto modifica...")
-    xpath = '//i[contains(text(), "arrow_drop_down")]'
-    if modifica := driver.find_element_by_xpath(xpath):
-        print("[*] trovato")
-        print("[+] porta in vista...")
-        driver.execute_script("arguments[0].scrollIntoView();", modifica)
-        print("[+] click...")
-        modifica.click()
-        return True
-    return False
+    try:
+        print("[+] cerco tasto modifica...")
+        xpath = '//i[contains(text(), "arrow_drop_down")]'
+        if modifica := driver.find_element_by_xpath(xpath):
+            print("[*] trovato")
+            print("[+] porta in vista...")
+            driver.execute_script("arguments[0].scrollIntoView();", modifica)
+            print("[+] click...")
+            modifica.click()
+            return True
+    except NoSuchElementException:
+        return False
 
 
 def click_sposta_appuntamento():
@@ -63,6 +65,20 @@ def aspetta(minuti=None, secondi=None):
         time.sleep(1)
 
 
+class Break(Exception): pass
+
+
+class Continue(Exception): pass
+
+
+def notfound():
+    print("[-] non trovato")
+    if input("[+] tornare alla pagina iniziale e premere ENTER (q esce) ...").upper() == "Q":
+        raise Break
+    else:
+        raise Continue
+
+
 url = "https://www.ilpiemontetivaccina.it"
 # url = "Vaccinazioni Covid-19.html"
 # url = os.path.abspath(url)
@@ -76,32 +92,42 @@ input("autenticati e premi un tasto ...")
 
 loop = True
 while loop:
-    if not click_modifica():
-        print("[-] non trovato")
-        input("[+] tornare alla pagina iniziale e premere un tasto ...")
-        continue
-    else:
-        aspetta(secondi=5)
-
-    if not click_sposta_appuntamento():
-        print("[-] non trovato")
-        input("[+] tornare alla pagina iniziale e premere un tasto ...")
-        continue
-    else:
-        aspetta(secondi=5)
-
-    if check_siamo_spiacenti():
-        if not click_torna_indietro():
-            print("[-] non trovato")
-            input("[+] tornare alla pagina iniziale e premere un tasto ...")
-            continue
+    try:
+        if not click_modifica():
+            notfound()
         else:
-            aspetta(minuti=2)
-    else:
-        print("[*] ATTENZIONE!")
-        print("[*] messaggio di errore non trovato!")
-        input("[+] premere un tasto per uscire...")
-        break
+            aspetta(secondi=random.randint(5))
 
+        if not click_sposta_appuntamento():
+            notfound()
+        else:
+            aspetta(secondi=random.randint(5))
+
+        if check_siamo_spiacenti():
+            aspetta(minuti=random.randint(10))
+            if not click_torna_indietro():
+                notfound()
+            else:
+                aspetta(minuti=random.randint(10))
+        else:
+            print("[*] ATTENZIONE!")
+            print("[*] messaggio di errore non trovato!")
+            input("[+] premere un tasto per uscire...")
+            break
+    except KeyboardInterrupt:
+        # input("premi un tasto per terminare...")
+        # driver.close()
+        # exit()
+        print("ctrl-c")
+    except Break:
+        break
+    except Continue:
+        continue
+    except NoSuchElementException:
+        print("[-] non trovato")
+        input("[+] tornare alla pagina iniziale e premere un tasto ...")
+        continue
+    except Exception as e:
+        print(repr(e))
 input("premi un tasto per terminare...")
 driver.close()
